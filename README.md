@@ -1,2 +1,2 @@
 # TOMATO_GPT_CBSE
-a school project
+it is made by M.vishwajith for a CBSE project
