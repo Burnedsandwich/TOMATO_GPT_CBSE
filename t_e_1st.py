@@ -29,7 +29,7 @@ def process_audio():
         print("📝 You said:", text)
 
         # Gemini AI interaction
-        client = genai.Client(api_key="AIzaSyDUNgnzgJHRNKOIClEVw72n2zbZTtN4MqI")
+        client = genai.Client(api_key="NUH UH")
         prompt = f"""
 You are a helpful assistant who responds humbly and respectfully, as if explaining to a farmer who may not be educated. Reply in Hindi  .
 
@@ -64,3 +64,4 @@ print("⌨️ Press SPACE to start/stop listening. Press ESC to exit.")
 keyboard.add_hotkey("space", toggle_listen)
 keyboard.wait("esc")
 print("👋 Exiting program.")
+
