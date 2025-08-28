@@ -4,12 +4,9 @@
 import os
 import numpy as np
 import pickle
-import threading
-import speech_recognition as sr
-import keyboard
-from gtts import gTTS
 from sentence_transformers import SentenceTransformer
 from google import genai
+from gtts import gTTS
 
 # ===============================
 # 2. Setup Gemini Client
@@ -71,57 +68,22 @@ def ask(query):
     return response.text
 
 # ===============================
-# 7. Speech Recognition + TTS
+# 7. Main Loop (Type → Answer → Speak)
 # ===============================
-recognizer = sr.Recognizer()
-mic = sr.Microphone()
+while True:
+    query = input("\n💬 Type your question (or 'exit' to quit): ")
+    if query.lower() == "exit":
+        print("👋 Exiting program.")
+        break
 
-is_listening = False
-audio_data = None
+    reply = ask(query)
+    print("🤖 Gemini RAG Reply:", reply)
 
-def listen_and_process():
-    global is_listening, audio_data
-    with mic as source:
-        recognizer.adjust_for_ambient_noise(source)
-        print("🎙️ Listening... Press SPACE again to stop.")
-        audio_data = recognizer.listen(source)
-    print("🛑 Listening stopped.")
-    is_listening = False
-    process_audio()
-
-def process_audio():
-    global audio_data
-    try:
-        print("🧠 Recognizing Tamil speech...")
-        text = recognizer.recognize_google(audio_data, language="ta-IN")
-        print("📝 You said:", text)
-
-        # 🔎 Run through RAG
-        reply = ask(text)
-        print("🤖 Gemini RAG Reply:", reply)
-
-        # 🗣️ Speak in Tamil
-        tts = gTTS(text=reply, lang='ta')
-        tts.save("response.mp3")
-        os.system("start response.mp3")  # Windows; "afplay" (Mac), "xdg-open" (Linux)
-
-    except sr.UnknownValueError:
-        print("❌ Could not understand audio.")
-    except sr.RequestError as e:
-        print(f"⚠️ API error: {e}")
-
-def toggle_listen():
-    global is_listening
-    if not is_listening:
-        is_listening = True
-        threading.Thread(target=listen_and_process).start()
-    else:
-        print("Already listening... Press SPACE again to stop recording.")
-
-# ===============================
-# 8. Hotkey Control
-# ===============================
-print("⌨️ Press SPACE to start/stop listening. Press ESC to exit.")
-keyboard.add_hotkey("space", toggle_listen)
-keyboard.wait("esc")
-print("👋 Exiting program.")
+    # 🗣️ Speak in Tamil
+    tts = gTTS(text=reply, lang='ta')
+    tts.save("response.mp3")
+    
+    # Windows
+    os.system("start response.mp3")
+    # Mac: os.system("afplay response.mp3")
+    # Linux: os.system("xdg-open response.mp3")
